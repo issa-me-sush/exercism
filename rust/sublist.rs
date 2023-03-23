@@ -1,29 +1,29 @@
-#[derive(Debug, PartialEq, Eq)]
-pub enum Comparison {
+enum Relationship {
     Equal,
     Sublist,
     Superlist,
     Unequal,
 }
 
-pub fn sublist<T: PartialEq>(first_list: &[T], second_list: &[T]) -> Comparison {
-    let (shorter, longer) = if first_list.len() <= second_list.len() {
-        (first_list, second_list)
-    } else {
-        (second_list, first_list)
-    };
+#[derive(Debug, PartialEq)]
+pub enum Comparison {
+    Equal,
+    Unequal,
+    Sublist,
+    Superlist,
+}
 
-    if shorter == longer {
-        Comparison::Equal
-    } else if longer.windows(shorter.len()).any(|window| window == shorter) {
-        if shorter.len() == longer.len() {
-            Comparison::Equal
-        } else if shorter.len() == second_list.len() {
-            Comparison::Sublist
-        } else {
-            Comparison::Superlist
-        }
-    } else {
-        Comparison::Unequal
+pub fn sublist<T: PartialEq>(list1: &[T], list2: &[T]) -> Comparison {
+    let len1 = list1.len();
+    let len2 = list2.len();
+
+    if len1 == len2 && list1 == list2 {
+        return Comparison::Equal;
+    } else if len1 <= len2 && (0..=len2 - len1).any(|i| &list2[i..i + len1] == list1) {
+        return Comparison::Sublist;
+    } else if len1 >= len2 && (0..=len1 - len2).any(|i| &list1[i..i + len2] == list2) {
+        return Comparison::Superlist;
     }
+
+    Comparison::Unequal
 }
