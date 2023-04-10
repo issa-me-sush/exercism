@@ -4,7 +4,7 @@ def exchange_money(budget, exchange_rate):
     :param exchange_rate: float - unit value of the foreign currency.
     :return: float - exchanged value of the foreign currency you can receive.
     """
-    return budget * exchange_rate
+    return budget / exchange_rate
 
 
 def get_change(budget, exchanging_value):
@@ -51,13 +51,6 @@ def exchangeable_value(budget, exchange_rate, spread, denomination):
     :param denomination: int - the value of a single bill.
     :return: int - maximum value you can get.
     """
-    # Calculate the amount of money after the exchange fee is taken
-    exchanged_amount = exchange_money(budget, exchange_rate) * (1 - spread / 100)
-    # Calculate the maximum number of bills of the given denomination that can be obtained
-    num_bills = get_number_of_bills(exchanged_amount, denomination)
-    # Calculate the total value of the bills obtained
-    bill_value = get_value_of_bills(denomination, num_bills)
-    # Calculate the leftover amount that cannot be exchanged into bills
-    leftover = get_leftover_of_bills(exchanged_amount, denomination)
-    # Return the total value of the bills obtained plus the leftover amount
-    return bill_value + leftover
+    exchange_rate = exchange_rate * (1 + spread / 100)
+    exchanged_value = budget / exchange_rate
+    return int(exchanged_value // denomination) * denomination
